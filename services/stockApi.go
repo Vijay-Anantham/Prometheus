@@ -15,6 +15,7 @@ type StockPrice struct {
 
 func ApiHandler(w http.ResponseWriter, r *http.Request) {
 	// Make an API call to Alpha Vantage
+
 	resp, err := http.Get("https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=IBM&apikey=TOB0OSLJF393DSV0")
 	if err != nil {
 		log.Fatal(err)
