@@ -1,6 +1,6 @@
 module github.com/dopemeth
 
-go 1.21.0
+go 1.17
 
 require github.com/prometheus/client_golang v1.17.0
 
