@@ -18,6 +18,6 @@ spec:
     spec:
       containers:
       - name: go-server
-        image: containers.cisco.com/vijaysek/server-app1:v11
+        image: [container_image]
         ports:
         - containerPort: 8090
