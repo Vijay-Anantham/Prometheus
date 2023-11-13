@@ -1,22 +1,24 @@
-# Use an official Go runtime as a parent image
 FROM golang:1.17 as builder
 
-# Set the working directory inside the container
+
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY ./main .
-COPY ./go.mod .
-COPY ./go.sum .
-
-# Build the Go application
+COPY ./main/cmd.go .
+COPY go.mod .
+COPY go.sum .
 RUN go mod tidy
-RUN go build -o main .
+RUN go build -o myapp .
+RUN ls -l /app
 
-FROM alphine:v1
-
-# Expose a port for the application (if necessary)
-EXPOSE 8080
+FROM alpine:3.14
+# This line fixed alpine problem of finding folders 
+RUN apk add libc6-compat
+WORKDIR /app
+COPY --from=builder /app/myapp .
+RUN chmod +x myapp
+RUN ls -l /app
+EXPOSE 8090
 
 # Command to run the executable
-CMD ["./main"]
+CMD ["./myapp"]
+# RUN ./myapp

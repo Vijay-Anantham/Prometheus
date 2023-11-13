@@ -1,0 +1,9 @@
+global:
+  resolve_timeout: 5m
+route:
+  receiver: webex_receiver
+receivers:
+    - name: webex_receiver
+      webex_config:
+        - room_id: 3141ae60-7d39-11ee-90ad-45d6ddfdea08
+          send_resolved: false

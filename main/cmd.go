@@ -77,21 +77,26 @@ var pingCounter = prometheus.NewCounter(
 // Incerment counter
 func pong(w http.ResponseWriter, req *http.Request) {
 	pongCounter.Inc()
-	fmt.Fprintf(w, "/ping end point hit")
+	fmt.Fprintf(w, "/pong end point hit")
 }
 
 // one counter to keep track of /pong endpoint traffic
 var pongCounter = prometheus.NewCounter(
 	prometheus.CounterOpts{
 		Name: "pong_request_count",
-		Help: "No of request handled by Ping handler",
+		Help: "No of request handled by Pong handler",
 	},
 )
 
-func main() {
+func init() {
 	prometheus.MustRegister(pingCounter)
-	http.HandleFunc("/ping", ping)
+	prometheus.MustRegister(pongCounter)
+}
+func main() {
+	log.Print("Start Listening on port 8080: ")
 	http.HandleFunc("/pong", pong)
+	http.HandleFunc("/ping", ping)
+
 	http.HandleFunc("/api", ApiHandler) // Define the API endpoint and its corresponding handler function
 	http.Handle("/metrics", promhttp.Handler())
 	http.ListenAndServe(":8090", nil)
