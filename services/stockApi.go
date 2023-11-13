@@ -5,6 +5,53 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
+	"sync"
+	"time"
+
+	"github.com/prometheus/client_golang/prometheus"
+)
+
+// TODO: Add prometheus montitoring
+// TODO: Add a counter 'Gaincounter' -> gain >= 5%
+// TODO: Add a counter 'Losscounter' -> loss >= 5%
+// TODO: Add a gauge 'fluctuations' --> lookup what gauge is
+// TODO: Webex alert for BUY SELL
+
+// Adding prometheus data
+var (
+	Pricecounter = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "stock_price_requests_total",
+			Help: "Total number of stock price requests.",
+		},
+		[]string{"symbol"},
+	)
+	Gaincounter = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "stock_gain_incured",
+			Help: "Number of time 5% Gain incured.",
+		},
+		[]string{"symbol"},
+	)
+	Losscounter = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "stock_loss_incured",
+			Help: "Number of time 5% loss incured.",
+		},
+		[]string{"symbol"},
+	)
+
+	priceGauge = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "stock_price",
+			Help: "Current stock price.",
+		},
+		[]string{"symbol"},
+	)
+
+	resultCh = make(chan string)
+	Wg       sync.WaitGroup
 )
 
 const (
@@ -27,14 +74,33 @@ type Price struct {
 }
 
 func GetStockPrice(w http.ResponseWriter, r *http.Request) {
-	err := fetchAndPrintStockPrices(w)
+	err := fetchAndPrintStockPrices()
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
+	w.Header().Set("Content-Type", "application/json")
+	result := <-resultCh
+	w.Write([]byte(result))
 }
 
-func fetchAndPrintStockPrices(w http.ResponseWriter) error {
+func FetchStockPricesPeriodically() {
+	defer Wg.Done()
+
+	ticker := time.NewTicker(time.Minute * interval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			if err := fetchAndPrintStockPrices(); err != nil {
+				fmt.Println("Error fetching stock prices:", err)
+			}
+		}
+	}
+}
+
+func fetchAndPrintStockPrices() error {
 	url := fmt.Sprintf("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=%s&interval=1min&apikey=%s", stockSymbol, apiKey)
 
 	resp, err := http.Get(url)
@@ -55,12 +121,14 @@ func fetchAndPrintStockPrices(w http.ResponseWriter) error {
 	}
 
 	latestData := getLatestPrice(data.TimeSeries)
+	result, _ := strconv.ParseFloat(latestData.Close, 64)
 	fmt.Print("Fetching stock prices: \n")
 	response := fmt.Sprintf(`{"Stock name": "%s", "latest_price": "%s"}`, stockSymbol, latestData.Close)
 	fmt.Println("Response:", string(response))
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(response))
-
+	// w.Header().Set("Content-Type", "application/json")
+	// w.Write([]byte(response))
+	priceGauge.WithLabelValues(stockSymbol).Set(result)
+	resultCh <- response
 	return nil
 }
 
