@@ -1,4 +1,4 @@
-module github.com/dopemeth
+module dopemeth
 
 go 1.17
 

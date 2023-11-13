@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/dopemeth/services"
+	"dopemeth/services"
+
 	"github.com/gorilla/mux"
 )
 

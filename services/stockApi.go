@@ -55,7 +55,7 @@ func fetchAndPrintStockPrices(w http.ResponseWriter) error {
 	}
 
 	latestData := getLatestPrice(data.TimeSeries)
-	fmt.Sprint("Fetching stock prices: \n")
+	fmt.Print("Fetching stock prices: \n")
 	response := fmt.Sprintf(`{"Stock name": "%s", "latest_price": "%s"}`, stockSymbol, latestData.Close)
 	fmt.Println("Response:", string(response))
 	w.Header().Set("Content-Type", "application/json")
