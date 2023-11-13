@@ -56,8 +56,11 @@ docker run -d -p 9090:9090 \
   --name prometheus \
   prom/prometheus
 
-## docker build command
+## docker build command from scratch with logs
   - `docker build --platform linux/amd64 -t containers.cisco.com/vijaysek/server-app1:v8 --no-cache --progress plain .`
+
+## docker build 
+  - `docker build --platform linux/amd64 -t containers.cisco.com/vijaysek/server-app1:v8 --progress plain .`
 
 
 ## Setup vscode in default for vi when editing something in the terminal

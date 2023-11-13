@@ -7,13 +7,24 @@ import (
 	"dopemeth/services"
 
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
+
+func init() {
+	prometheus.MustRegister(services.Pricecounter)
+	prometheus.MustRegister(services.Gaincounter)
+	prometheus.MustRegister(services.Losscounter)
+	prometheus.MustRegister(services.PriceGauge)
+
+}
 
 func main() {
 	services.Wg.Add(1)
 	go services.FetchStockPricesPeriodically()
 
 	router := mux.NewRouter()
+	router.Handle("/metrics", promhttp.Handler())
 	router.HandleFunc("/api", services.GetStockPrice).Methods("GET")
 
 	fmt.Println("API server listening on :8080")

@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: go-server
+  name: stock-server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: go-server
+      app: stock-server
   template:
     metadata:
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: "/metrics"  # The path where your application exposes metrics.
-        prometheus.io/port: "8090"      # The port where your application exposes metrics.
+        prometheus.io/port: "8080"      # The port where your application exposes metrics.
       labels:
-        app: go-server
+        app: stock-server
     spec:
       containers:
-      - name: go-server
-        image: containers.cisco.com
+      - name: stock-server
+        image: containers.cisco.com/vijaysek/stockserver:v1
         ports:
-        - containerPort: 8090
+        - containerPort: 8080

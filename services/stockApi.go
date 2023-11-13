@@ -44,7 +44,7 @@ var (
 		[]string{"symbol"},
 	)
 
-	priceGauge = prometheus.NewGaugeVec(
+	PriceGauge = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "stock_price",
 			Help: "Current stock price.",
@@ -137,7 +137,7 @@ func fetchAndPrintStockPrices() error {
 	// w.Header().Set("Content-Type", "application/json")
 	// w.Write([]byte(response))
 	log.Print("Gauge setting init..")
-	priceGauge.WithLabelValues(stockSymbol).Set(result)
+	PriceGauge.WithLabelValues(stockSymbol).Set(result)
 	log.Print("Gauge setting finished..")
 	if !isChannelAvailable(resultCh) {
 		return errors.New("Buffered channel not found")
