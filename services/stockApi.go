@@ -2,8 +2,10 @@ package services
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 	"sync"
@@ -50,7 +52,7 @@ var (
 		[]string{"symbol"},
 	)
 
-	resultCh = make(chan string)
+	resultCh = make(chan string, 1)
 	Wg       sync.WaitGroup
 )
 
@@ -87,17 +89,24 @@ func GetStockPrice(w http.ResponseWriter, r *http.Request) {
 func FetchStockPricesPeriodically() {
 	defer Wg.Done()
 
-	ticker := time.NewTicker(time.Minute * interval)
+	ticker := time.NewTicker(time.Second * 10)
 	defer ticker.Stop()
+	defer log.Print("got hit")
 
-	for {
-		select {
-		case <-ticker.C:
-			if err := fetchAndPrintStockPrices(); err != nil {
-				fmt.Println("Error fetching stock prices:", err)
+	done := make(chan bool)
+
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				if err := fetchAndPrintStockPrices(); err != nil {
+					fmt.Println("Error fetching stock prices:", err)
+				}
+				fmt.Print("still in loop")
 			}
 		}
-	}
+	}()
+	<-done
 }
 
 func fetchAndPrintStockPrices() error {
@@ -127,8 +136,15 @@ func fetchAndPrintStockPrices() error {
 	fmt.Println("Response:", string(response))
 	// w.Header().Set("Content-Type", "application/json")
 	// w.Write([]byte(response))
+	log.Print("Gauge setting init..")
 	priceGauge.WithLabelValues(stockSymbol).Set(result)
+	log.Print("Gauge setting finished..")
+	if !isChannelAvailable(resultCh) {
+		return errors.New("Buffered channel not found")
+	}
+	log.Print("Channel is available")
 	resultCh <- response
+	log.Print("Funtion returning")
 	return nil
 }
 
@@ -140,4 +156,22 @@ func getLatestPrice(timeSeries map[string]Price) Price {
 		break
 	}
 	return latestData
+}
+
+// Helper function
+func isChannelAvailable(ch chan string) bool {
+	if ch == nil {
+		return false
+	}
+
+	// Check if the channel is closed
+	select {
+	case _, ok := <-ch:
+		if !ok {
+			return false
+		}
+	default:
+	}
+
+	return true
 }
