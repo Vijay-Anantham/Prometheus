@@ -20,6 +20,7 @@
     - The following commands can be used to install prometheus in the cluster
     - `helm repo add prometheus-community https://prometheus-community.github.io/helm-charts`
     - `helm install my-prometheus prometheus-community/prometheus --version 25.4.0`
+    - `helm upgrade --install my-prometheus prometheus-community/prometheus --set prometheus.prometheusSpec.configMaps.prometheus=custom-prometheus-config`
 ## Accessing prometheus metrics from the cluster
   - installation of prometheus will spawn up some pods and services that can be used to assess the metrics
     - Portforwarded from a service named 'my-prometheus-server '
@@ -54,3 +55,16 @@ docker run -d -p 9090:9090 \
   -v /Users/vijaysek/observability/dopemeth/config/prometheus.yaml:/etc/prometheus/prometheus.yaml \
   --name prometheus \
   prom/prometheus
+
+## docker build command
+  - `docker build --platform linux/amd64 -t containers.cisco.com/vijaysek/server-app1:v8 --no-cache --progress plain .`
+
+
+## Setup vscode in default for vi when editing something in the terminal
+  - `export EDITOR='code --wait'`
+
+## Editing a kuebctl config file 
+  - `k edit <resource-type> <resource-name>`
+
+## updating the changes in the configmap in the deployment 
+  - `k rollout restart <resourcetype> <reource-name>`
