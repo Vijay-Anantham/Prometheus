@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"dopemeth/poller"
 	"dopemeth/services"
 
 	"github.com/gorilla/mux"
@@ -20,15 +21,26 @@ func init() {
 }
 
 func main() {
-	services.Wg.Add(1)
-	go services.FetchStockPricesPeriodically()
+	// services.Wg.Add(1)
+	// go services.FetchStockPricesPeriodically()
 
 	router := mux.NewRouter()
+	//FIXME: /metrics endpoint return 404 in pod but runs in container know y
 	router.Handle("/metrics", promhttp.Handler())
 	router.HandleFunc("/api", services.GetStockPrice).Methods("GET")
+	// router.HandleFunc("/apiRealtime", services.FetchStockPricesPeriodically).Methods("GET")
+	go func() {
+		fmt.Println("Metrics server listening on :8080")
+		http.ListenAndServe(":8080", router)
+	}()
 
-	fmt.Println("API server listening on :8080")
-	http.ListenAndServe(":8080", router)
+	// Start a Goroutine to periodically poll the API
+	go poller.PollApi()
+
+	// Run indefinitely to keep the program alive
+	select {}
+	// fmt.Println("API server listening on :8080")
+	// http.ListenAndServe(":8080", router)
 	// wait till all go routine gets finished
-	services.Wg.Wait()
+	// services.Wg.Wait()
 }

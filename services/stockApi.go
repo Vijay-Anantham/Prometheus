@@ -2,14 +2,11 @@ package services
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"strconv"
-	"sync"
-	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -52,8 +49,7 @@ var (
 		[]string{"symbol"},
 	)
 
-	resultCh = make(chan string, 1)
-	Wg       sync.WaitGroup
+	resultCh string
 )
 
 const (
@@ -75,58 +71,60 @@ type Price struct {
 	Volume string `json:"5. volume"`
 }
 
+type Output struct {
+	Name  string
+	Price float64
+}
+
 func GetStockPrice(w http.ResponseWriter, r *http.Request) {
-	err := fetchAndPrintStockPrices()
+	_, err := FetchAndPrintStockPrices()
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	result := <-resultCh
+	result := resultCh
 	w.Write([]byte(result))
 }
 
-func FetchStockPricesPeriodically() {
-	defer Wg.Done()
+// func FetchStockPricesPeriodically(w http.ResponseWriter, r *http.Request) {
+// 	// defer Wg.Done()
 
-	ticker := time.NewTicker(time.Second * 10)
-	defer ticker.Stop()
-	defer log.Print("got hit")
+// 	ticker := time.NewTicker(time.Second * 10)
+// 	defer ticker.Stop()
+// 	defer log.Print("got hit")
 
-	done := make(chan bool)
+// 	for {
+// 		select {
+// 		case <-ticker.C:
+// 			if err := fetchAndPrintStockPrices(w); err != nil {
+// 				fmt.Println("Error fetching stock prices:", err)
+// 			}
+// 			fmt.Print("still in loop")
+// 		}
+// 	}
+// }
 
-	go func() {
-		for {
-			select {
-			case <-ticker.C:
-				if err := fetchAndPrintStockPrices(); err != nil {
-					fmt.Println("Error fetching stock prices:", err)
-				}
-				fmt.Print("still in loop")
-			}
-		}
-	}()
-	<-done
-}
-
-func fetchAndPrintStockPrices() error {
+func FetchAndPrintStockPrices() (Output, error) {
+	log.Print("Entered function")
 	url := fmt.Sprintf("https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=%s&interval=1min&apikey=%s", stockSymbol, apiKey)
-
+	Pricecounter.WithLabelValues(stockSymbol).Inc()
+	log.Print("Updated counter")
 	resp, err := http.Get(url)
 	if err != nil {
-		return err
+		return Output{}, err
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return err
+		return Output{}, err
 	}
 
 	var data IntradayResponse
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		return err
+		return Output{}, err
 	}
 
 	latestData := getLatestPrice(data.TimeSeries)
@@ -134,18 +132,18 @@ func fetchAndPrintStockPrices() error {
 	fmt.Print("Fetching stock prices: \n")
 	response := fmt.Sprintf(`{"Stock name": "%s", "latest_price": "%s"}`, stockSymbol, latestData.Close)
 	fmt.Println("Response:", string(response))
+	pollerout := Output{
+		Name:  stockSymbol,
+		Price: result,
+	}
+	log.Print("Output ready")
 	// w.Header().Set("Content-Type", "application/json")
 	// w.Write([]byte(response))
-	log.Print("Gauge setting init..")
 	PriceGauge.WithLabelValues(stockSymbol).Set(result)
-	log.Print("Gauge setting finished..")
-	if !isChannelAvailable(resultCh) {
-		return errors.New("Buffered channel not found")
-	}
-	log.Print("Channel is available")
-	resultCh <- response
-	log.Print("Funtion returning")
-	return nil
+	log.Print("Gauge value set")
+	resultCh = response
+	log.Print("Funtion terminating gracefully")
+	return pollerout, nil
 }
 
 func getLatestPrice(timeSeries map[string]Price) Price {
@@ -156,22 +154,4 @@ func getLatestPrice(timeSeries map[string]Price) Price {
 		break
 	}
 	return latestData
-}
-
-// Helper function
-func isChannelAvailable(ch chan string) bool {
-	if ch == nil {
-		return false
-	}
-
-	// Check if the channel is closed
-	select {
-	case _, ok := <-ch:
-		if !ok {
-			return false
-		}
-	default:
-	}
-
-	return true
 }
