@@ -81,3 +81,11 @@ docker run -d -p 9090:9090 \
 ## Fun kubernetes command to play around
   -  `kubectl get configmap my-prometheus-server -o go-template='{{.data.prometheus}}`
   
+## Webex access token
+
+## Setting up alert manager
+  - First prometheus alerting rules are set in the prometheus.yaml file
+  - Alertmanager config files is configured with appropriate route to send trigger
+  
+## Sample curl to test the testfire alert
+  - `curl -XPOST http://[localhost:[port where prometheus ui running]]/api/v1/query -d 'query=vector(2)'`

@@ -17,3 +17,12 @@ groups:
     annotations:
       summary: "Stock loss increased"
       description: "The stock loss has increased in the last minute."
+- name: example
+  rules:
+    - alert: TestAlert
+      expr: vector(1)  # This condition always evaluates to 1, triggering the alert
+      for: 1m
+      labels:
+        severity: testing
+      annotations:
+        summary: "This is a test alert"
