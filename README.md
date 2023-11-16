@@ -71,3 +71,13 @@ docker run -d -p 9090:9090 \
 
 ## updating the changes in the configmap in the deployment 
   - `k rollout restart <resourcetype> <reource-name>`
+
+## Settingup opentelemetry collector
+  - `kubectl apply -f https://raw.githubusercontent.com/open-telemetry/opentelemetry-collector/main/examples/k8s/otel-config.yaml`
+
+## Loading local config file into otel container
+  - `docker run -v $(pwd)/config.yaml:/etc/otelcol-contrib/config.yaml otel/opentelemetry-collector-contrib:0.88.0`
+
+## Fun kubernetes command to play around
+  -  `kubectl get configmap my-prometheus-server -o go-template='{{.data.prometheus}}`
+  

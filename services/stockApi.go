@@ -11,10 +11,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-// TODO: Add prometheus montitoring
-// TODO: Add a counter 'Gaincounter' -> gain >= 5%
-// TODO: Add a counter 'Losscounter' -> loss >= 5%
-// TODO: Add a gauge 'fluctuations' --> lookup what gauge is
 // TODO: Webex alert for BUY SELL
 
 // Adding prometheus data

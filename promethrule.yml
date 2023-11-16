@@ -1,0 +1,19 @@
+groups:
+- name: stock_alerts
+  rules:
+  - alert: StockGained
+    expr: increase(stock_gain_incured[1m]) > 0
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Stock gain increased"
+      description: "The stock gain has increased in the last minute."
+  - alert: StockLost
+    expr: increase(stock_loss_incured[1m]) > 0
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Stock loss increased"
+      description: "The stock loss has increased in the last minute."

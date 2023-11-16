@@ -5,6 +5,7 @@ WORKDIR /app
 
 COPY /main ./main
 COPY /services ./services
+COPY /poller ./poller
 COPY go.mod .
 COPY go.sum .
 RUN go mod tidy

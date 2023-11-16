@@ -39,11 +39,15 @@ func updateState(v services.Output) {
 }
 
 func getgain(v1 float64, v2 float64) float64 {
-	return ((v2 - v1) / v1) * 100
+	g := ((v2 - v1) / v1) * 100
+	log.Printf("loss %f", g)
+	return g
 }
 
 func getloss(v1 float64, v2 float64) float64 {
-	return ((v1 - v2) / v1) * 100
+	l := ((v1 - v2) / v1) * 100
+	log.Printf("loss %f", l)
+	return l
 }
 
 func PollApi() error {
@@ -55,7 +59,7 @@ func PollApi() error {
 		}
 		log.Print("Function crossed")
 		updateState(val)
-		time.Sleep(30 * time.Second)
+		time.Sleep(1 * time.Minute)
 		log.Print("Sleep crossed")
 	}
 }
