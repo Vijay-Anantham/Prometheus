@@ -12,6 +12,8 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+// TODO: Try adding a input collection for name of stock to scrap
+
 func init() {
 	prometheus.MustRegister(services.Pricecounter)
 	prometheus.MustRegister(services.Gaincounter)
@@ -25,7 +27,6 @@ func main() {
 	// go services.FetchStockPricesPeriodically()
 
 	router := mux.NewRouter()
-	//FIXME: /metrics endpoint return 404 in pod but runs in container know y
 	router.Handle("/metrics", promhttp.Handler())
 	router.HandleFunc("/api", services.GetStockPrice).Methods("GET")
 	// router.HandleFunc("/apiRealtime", services.FetchStockPricesPeriodically).Methods("GET")
