@@ -15,7 +15,6 @@ data:
       - name: 'webex'
         webhook_configs:
           - url: 'https://webexapis.com/v1/messages'
-            room_id: "<our room id>"
             send_resolved: true
             http_config:
               bearer_token: 'ODc2Yjg5NTUtY2ZiMi00N2FhLWEwYjctMzljMWUzOGE5NzY4NTlkODY1NDAtYjQ0_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f'

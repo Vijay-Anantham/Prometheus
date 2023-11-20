@@ -89,3 +89,8 @@ docker run -d -p 9090:9090 \
   
 ## Sample curl to test the testfire alert
   - `curl -XPOST http://[localhost:[port where prometheus ui running]]/api/v1/query -d 'query=vector(2)'`
+
+  webexteams://im?space=3141ae60-7d39-11ee-90ad-45d6ddfdea08
+
+  # app password for google gmail alert channel
+   - lstj tyma nksz ulbs 
