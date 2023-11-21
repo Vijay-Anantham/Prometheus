@@ -13,11 +13,16 @@ data:
 
     receivers:
       - name: 'webex'
-        webhook_configs:
-          - url: 'https://webexapis.com/v1/messages'
-            send_resolved: true
-            http_config:
-              bearer_token: 'ODc2Yjg5NTUtY2ZiMi00N2FhLWEwYjctMzljMWUzOGE5NzY4NTlkODY1NDAtYjQ0_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f'
+        webex_configs:
+        - api_url: https://webexapis.com/v1/messages
+          send_resolved: true
+          room_id: "Y2lzY29zcGFyazovL3VzL1JPT00vY2UyMjVlZjAtODc3MC0xMWVlLWEzYjEtZmI3ZmU5MWQ3NmZk"
+          http_config:
+            tls_config:
+              insecure_skip_verify: true
+            authorization:
+              type: Bearer
+              credentials: "YTQwOTQyNTItNWRhMy00YWIwLWI1ZDAtNWE0MGJmOTM4MmY1MGUxNTE1NDYtNjJk_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f"
     templates:
       - /etc/alertmanager/*.tmpl
 kind: ConfigMap

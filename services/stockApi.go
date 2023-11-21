@@ -17,7 +17,7 @@ import (
 var (
 	Pricecounter = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
-			Name: "stock_price_requests_total",
+			Name: "pric",
 			Help: "Total number of stock price requests.",
 		},
 		[]string{"symbol"},

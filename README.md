@@ -92,5 +92,34 @@ docker run -d -p 9090:9090 \
 
   webexteams://im?space=3141ae60-7d39-11ee-90ad-45d6ddfdea08
 
-  # app password for google gmail alert channel
-   - lstj tyma nksz ulbs 
+  ## app password for google gmail alert channel
+   - lstj tyma nksz ulbs
+
+  ## Team creation webex 
+    
+    ```
+    {
+      "id": "Y2lzY29zcGFyazovL3VzL1RFQU0vMGExYjZiMDAtODc3MC0xMWVlLTgwNzItZTcxZTdlMzVhNjc0",
+      "name": "monitoringTeam",
+      "description": "For receiving notification from alertmanager",
+      "creatorId": "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9jNjFjNjJhZC1mYjFiLTQ5OTItYmE5Mi0xZjJiNWQyYmE5NGY",
+      "created": "2023-11-20T06:42:57.072Z"
+    }
+    ```
+
+## webex room 
+    ```
+        {
+      "id": "Y2lzY29zcGFyazovL3VzL1JPT00vY2UyMjVlZjAtODc3MC0xMWVlLWEzYjEtZmI3ZmU5MWQ3NmZk",
+      "title": "prometh-alertmanager",
+      "type": "group",
+      "isLocked": false,
+      "lastActivity": "2023-11-20T06:48:25.961Z",
+      "teamId": "Y2lzY29zcGFyazovL3VzL1RFQU0vMGExYjZiMDAtODc3MC0xMWVlLTgwNzItZTcxZTdlMzVhNjc0",
+      "creatorId": "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9jNjFjNjJhZC1mYjFiLTQ5OTItYmE5Mi0xZjJiNWQyYmE5NGY",
+      "created": "2023-11-20T06:48:25.961Z",
+      "ownerId": "Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi8xZWI2NWZkZi05NjQzLTQxN2YtOTk3NC1hZDcyY2FlMGUxMGY",
+      "description": "room for getting notifications",
+      "isPublic": false
+    }
+    ```

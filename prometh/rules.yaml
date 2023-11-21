@@ -4,3 +4,17 @@ groups:
    - alert: CountGreaterThan5
      expr: ping_request_count > 5
      for: 10s
+
+
+# "global:\n  resolve_timeout: 5m\n\nroute:\n  receiver: 'webex'\n
+#     \ group_by: ['alertname', 'severity']\n  group_wait: 30s\n  group_interval: 5m\n
+#     \ repeat_interval: 15m\n\nreceivers:\n  - name: 'webex'\n    webex_configs:\n
+#     \   - api_url: https://webexapis.com/v1/messages\n      send_resolved: true\n
+#     \     roomi_id: \"Y2lzY29zcGFyazovL3VzL1JPT00vY2UyMjVlZjAtODc3MC0xMWVlLWEzYjEtZmI3ZmU5MWQ3NmZk\"\n
+#     \     http_config:\n        tls_config:\n          insecure_skip_verify: true\n
+#     \       authorization:\n          type: Bearer\n          credentials: \"YTQwOTQyNTItNWRhMy00YWIwLWI1ZDAtNWE0MGJmOTM4MmY1MGUxNTE1NDYtNjJk_PF84_1eb65fdf-9643-417f-9974-ad72cae0e10f\"\n
+#     \         \n  - name: 'gmail-notifications'\n    email_configs:\n    - to: vijayanantham143@gmail.com\n
+#     \     from: vijayanantham143@gmail.com\n      smarthost: smtp.gmail.com:587\n
+#     \     auth_username: vijayanantham143@gmail.com\n      auth_identity: vijayanantham143@gmail.com\n
+#     \     auth_password: lstj tyma nksz ulbs\n      send_resolved: true\n\ntemplates:\n
+#     \ - /etc/alertmanager/*.tmpl\n"
